@@ -86,33 +86,33 @@ def pushbullet_message(title, body, token):
     else:
         print ('Sent: {} - {}'.format(title, body)) 
 
-
-while True:
-    expireTime = 86400
-    rs.login(username= username, password= password, expiresIn= expireTime, by_sms=True)
-    now = time.perf_counter()
-    symb = 'DOGE'
-    
+if __name__ == "__main__":
     while True:
-        mc = myCryptos()
-        p = mc.getProfit(symb)
-        pp = mc.getPercProf(symb)
-        notifAmnt = 10
-        msg = 'profit at $ {:.3f} ({:.3f}%)'.format(p, pp*100)
-        print(msg)
+        expireTime = 86400
+        rs.login(username= username, password= password, expiresIn= expireTime, by_sms=True)
+        now = time.perf_counter()
+        symb = 'DOGE'
+        print(symb)
+        while True:
+            mc = myCryptos()
+            p = mc.getProfit(symb)
+            pp = mc.getPercProf(symb)
+            notifAmnt = 10
+            msg = 'profit at $ {:.3f} ({:.3f}%)'.format(p, pp*100)
+            
+            print(msg, end='\r')
+            
+            if p >= notifAmnt:
+                pushbullet_message(symb, msg, token)
+                notifAmnt = p + 10
+            if p > 0 and (notifAmnt - p) > 10: 
+                notifAmnt = p + 10
         
-        if p >= notifAmnt:
-            pushbullet_message(symb, msg, token)
-            notifAmnt = p + 10
-        
-        if p > 0 and (notifAmnt - p) > 10: 
-            notifAmnt = p + 10
-        
-        if p < 0: notifAmnt = 10
+            if p < 0: notifAmnt = 10
 
-        #Check for time
-        timePass = time.perf_counter() - now
-        if timePass >= expireTime: break
-        time.sleep(1)
+            #Check for time
+            timePass = time.perf_counter() - now
+            if timePass >= expireTime: break
+            time.sleep(1)
 
-    rs.logout()
+        rs.logout()
